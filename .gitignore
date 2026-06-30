@@ -25,3 +25,20 @@ Thumbs.db
 
 # JetBrains
 .idea/
+
+# Environment
+.env
+
+# Docker runtime
+data/server/
+
+# Runtime data
+data/persistent/Saves/
+data/persistent/Logs/
+
+# Backups
+backups/
+
+# OS
+.DS_Store
+Thumbs.db
