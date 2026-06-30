@@ -12,18 +12,23 @@ BACKUP_FILE="$BACKUP_DIR/Azeroth-$TIMESTAMP.tar.gz"
 
 mkdir -p "$BACKUP_DIR"
 
-echo "Stopping server..."
-docker compose stop
+echo "=================================="
+echo " Astaroth Backup Utility"
+echo "=================================="
 
-echo "Creating backup..."
+echo "[1/4] Stopping server..."
+docker compose down
 
+echo "[2/4] Creating backup..."
 tar -czf "$BACKUP_FILE" \
     -C "$PROJECT_DIR/data/persistent" \
     Saves Settings
 
-echo "Starting server..."
-docker compose start
+echo "[3/4] Starting server..."
+docker compose up -d
+
+echo "[4/4] Backup complete!"
 
 echo
-echo "Backup created:"
+echo "Saved as:"
 echo "$BACKUP_FILE"
