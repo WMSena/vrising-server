@@ -1,0 +1,25 @@
+# Environment
+.env
+
+# V Rising save files
+save-data/Saves/v4/*
+!save-data/Saves/v4/.gitkeep
+
+# Backups
+backups/*
+!backups/.gitkeep
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# JetBrains
+.idea/
