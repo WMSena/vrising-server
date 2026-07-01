@@ -1,4 +1,15 @@
 services:
+  mongo:
+    image: mongo:8
+    container_name: mongo
+    restart: unless-stopped
+    env_file:
+      - ./mongoDB/.env
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./mongoDB/init:/docker-entrypoint-initdb.d:ro
   vrising:
     image: trueosiris/vrising:latest
     container_name: vrising
@@ -21,9 +32,24 @@ services:
   sebastian:
     build:
       context: ./apps/sebastian
-      container_name: sebastian
-      restart: unless-stopped
+    container_name: sebastian
+    restart: unless-stopped
     env_file:
       - ./apps/sebastian/.env
     depends_on:
       - vrising
+  butler:
+    build:
+      context: ./apps/butler
+    container_name: butler
+    restart: unless-stopped
+    volumes:
+      - ./apps/butler/state:/app/state
+      - ./data/persistent:/opt/vrising-server/data/persistent:ro
+    env_file:
+      - ./apps/butler/.env
+    environment:
+      TZ: Asia/Jakarta
+      
+volumes:
+  mongo-data:
