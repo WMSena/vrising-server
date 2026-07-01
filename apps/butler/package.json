@@ -1,0 +1,11 @@
+{
+  "name": "butler",
+  "version": "1.0.0",
+  "description": "V Rising log monitor",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {}
+}
