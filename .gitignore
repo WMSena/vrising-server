@@ -42,3 +42,7 @@ backups/
 # OS
 .DS_Store
 Thumbs.db
+
+node_modules
+.env
+data/persistent/Settings/ServerGameSettings.json
