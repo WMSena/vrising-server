@@ -1,9 +1,11 @@
 # Environment
 .env
 
-# V Rising save files
-save-data/Saves/v4/*
-!save-data/Saves/v4/.gitkeep
+# World saves
+data/persistent/Saves/v4/*
+
+# Keep the folder structure
+!data/persistent/Saves/v4/.gitkeep
 
 # Backups
 backups/*
@@ -23,3 +25,20 @@ Thumbs.db
 
 # JetBrains
 .idea/
+
+# Environment
+.env
+
+# Docker runtime
+data/server/
+
+# Runtime data
+data/persistent/Saves/
+data/persistent/Logs/
+
+# Backups
+backups/
+
+# OS
+.DS_Store
+Thumbs.db
