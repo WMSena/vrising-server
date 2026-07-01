@@ -1,0 +1,19 @@
+{
+  "name": "sebastian",
+  "version": "1.0.0",
+  "description": "Discord infrastructure assistant for Astaroth Server",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "deploy": "node src/scripts/deploy.commands.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.26.4",
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

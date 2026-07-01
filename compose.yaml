@@ -2,25 +2,28 @@ services:
   vrising:
     image: trueosiris/vrising:latest
     container_name: vrising
-
     restart: unless-stopped
-
     env_file:
       - .env
-
     ports:
       - "27015:27015/udp"
       - "27016:27016/udp"
-
     volumes:
       - ./data/server:/mnt/vrising/server
       - ./data/persistent:/mnt/vrising/persistentdata
-
     stdin_open: true
     tty: true
-
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "5"
+  sebastian:
+    build:
+      context: ./apps/sebastian
+      container_name: sebastian
+      restart: unless-stopped
+    env_file:
+      - ./apps/sebastian/.env
+    depends_on:
+      - vrising
