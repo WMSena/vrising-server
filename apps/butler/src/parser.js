@@ -1,10 +1,11 @@
+import mongoose from 'mongoose';
 const CONNECT_REGEX =
 /User '\{Steam (\d+)\}' '(\d+)'.*?Character: '(.+?)' connected/;
 
 const DISCONNECT_REGEX =
 /User '\{Steam (\d+)\}' disconnected/;
 
-export function parseLine(line, state) {
+export async function parseLine(line) {
 
     const connect = line.match(CONNECT_REGEX);
 
@@ -13,37 +14,71 @@ export function parseLine(line, state) {
         const steamId = connect[2];
         const character = connect[3];
 
-        if (
-            !state.players.some(
-                player => player.steamId === steamId
-            )
-        ) {
+        const rawCollection = mongoose.connection.db.collection('players');
+        const docs = await rawCollection
+            .find({'steamId' : steamId, 'character' : character})
+            .project({ _id: 0 }) 
+            .toArray();
 
-            state.players.push({
-                connectionId,
-                steamId,
-                character,
-                connectedAt: new Date().toISOString()
+        if (docs.length) {
+            const insertResult = await rawCollection.updateOne(
+                { steamId: steamId, character: character },
+                { 
+                    $set:{
+                        steamId: steamId,
+                        character: character,
+                        connectionId: connectionId,
+                        online : true,
+                        connectedAt: new Date() // Note: You must add timestamps manually!
+                    }
+                }
+            );
+        }else{
+            const insertResult = await rawCollection.insertOne({
+                steamId: steamId,
+                character: character,
+                connectionId: connectionId,
+                online : true,
+                connectedAt: new Date() // Note: You must add timestamps manually!
             });
-
-            console.log(`+ ${character}`);
-
         }
-
         return;
-
     }
 
     const disconnect = line.match(DISCONNECT_REGEX);
 
     if (disconnect) {
         const connectionId = disconnect[1];
-        state.players = state.players.filter(
-            player => player.connectionId !== connectionId
-        );
 
-        console.log(`- Player ${connectionId} disconnected`);
+        const rawCollection = mongoose.connection.db.collection('players');
+        const docs = await rawCollection
+            .find({'connectionId' : connectionId})
+            .project({ _id: 0 }) 
+            .toArray();
 
+        if (docs.length) {
+            const insertResult = await rawCollection.updateOne(
+                { connectionId: connectionId },
+                { 
+                    $set:{
+                        online : false
+                    }
+                }
+            );
+        }
     }
+}
 
+export async function parseServer(key,value) {
+    const rawCollection = mongoose.connection.db.collection('server');
+    console.log("Updating server state: " + key + " = " + value);
+    await rawCollection.updateOne(
+        { key: key }, // 1. Filter
+        { 
+            $set: {
+                value: value
+            }
+        },
+        { upsert: true }                                     // 3. Option flag
+    );
 }
