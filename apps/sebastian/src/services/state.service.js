@@ -1,30 +1,33 @@
-import fs from "fs/promises";
-
-import config from "../config/index.js";
+import mongoose from 'mongoose';
+import { connectMongo } from "./database.service.js";
+await connectMongo();
 
 export default {
 
     async load() {
-
         try {
+            const rawCollection = mongoose.connection.db.collection('players');
+            const docs = await rawCollection
+                .find({'online': true})
+                .project({ _id: 0 }) 
+                .toArray();
 
-            const raw = await fs.readFile(
-                config.butler.stateFile,
-                "utf8"
-            );
-
-            return JSON.parse(raw);
-
+            return docs;
         } catch {
-
-            return {
-
-                players: []
-
-            };
-
+            return [];
         }
+    },
+    async totalPlayerCount() {
+        try {
+            const rawCollection = mongoose.connection.db.collection('players');
+            const docs = await rawCollection
+                .find()
+                .project({ _id: 1 }) 
+                .toArray();
 
+            return docs.length;
+        } catch {
+            return [];
+        }
     }
-
 };

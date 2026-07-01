@@ -1,11 +1,12 @@
-export default {
+import dotenv from 'dotenv';
+dotenv.config();
 
+export default {
     docker: {
         vrising: "vrising"
     },
-    butler: {
-        stateFile:
-            "/opt/vrising-server/apps/butler/state/state.json"
+    mongo: {
+        uri: process.env.MONGO_URI
     },
     backup: {
         directory: "/opt/vrising-server/backups/manual",

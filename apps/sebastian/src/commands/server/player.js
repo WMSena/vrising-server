@@ -13,7 +13,7 @@ export default {
 
         const state = await stateService.load();
 
-        if (state.players.length === 0) {
+        if (state.length === 0) {
 
             return interaction.reply({
 
@@ -35,42 +35,26 @@ export default {
             });
 
         }
+        console.log(state);
 
-        const description = state.players
+        const description = state.map(
+            (player, index) =>`${index + 1}. **${player.character}**`
+        ).join("\n");
 
-            .map(
-
-                (player, index) =>
-
-                    `${index + 1}. **${player.character}**`
-
-            )
-
-            .join("\n");
+        console.log(description)
+        const totalPlayerCount = await stateService.totalPlayerCount();
 
         await interaction.reply({
-
             embeds: [
-
                 {
-
                     title: "🦇 Online Players",
-
                     description,
-
                     color: 0x57F287,
-
                     footer: {
-
-                        text:
-                            `${state.players.length} player(s) online`
-
+                        text: `${state.length} player(s) online out of ${totalPlayerCount} total`
                     }
-
                 }
-
             ]
-
         });
 
     }
