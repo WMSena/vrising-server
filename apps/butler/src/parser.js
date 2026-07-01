@@ -1,41 +1,48 @@
 const CONNECT_REGEX =
-/Character: '(.+?)' connected/;
+/User '\{Steam (\d+)\}' '(\d+)'.*?Character: '(.+?)' connected/;
 
 const DISCONNECT_REGEX =
-/User '\{Steam .*?\}' disconnected/;
+/User '\{Steam (\d+)\}' disconnected/;
 
 export function parseLine(line, state) {
 
     const connect = line.match(CONNECT_REGEX);
 
     if (connect) {
-
-        const player = connect[1];
+        const connectionId = connect[1];
+        const steamId = connect[2];
+        const character = connect[3];
 
         if (
-            !state.players.find(
-                p => p.name === player
+            !state.players.some(
+                player => player.steamId === steamId
             )
         ) {
 
             state.players.push({
-
-                name: player,
-                connectedAt:
-                    new Date().toISOString()
-
+                connectionId,
+                steamId,
+                character,
+                connectedAt: new Date().toISOString()
             });
+
+            console.log(`+ ${character}`);
 
         }
 
+        return;
+
     }
 
-    if (DISCONNECT_REGEX.test(line)) {
+    const disconnect = line.match(DISCONNECT_REGEX);
 
-        /**
-         * We'll improve this later.
-         * Need SteamID mapping.
-         */
+    if (disconnect) {
+        const connectionId = disconnect[1];
+        state.players = state.players.filter(
+            player => player.connectionId !== connectionId
+        );
+
+        console.log(`- Player ${connectionId} disconnected`);
 
     }
 

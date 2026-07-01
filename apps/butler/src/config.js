@@ -2,8 +2,8 @@ import path from "path";
 
 export default {
 
-    logFile:
-        "/opt/vrising-server/data/persistent/*VRisingServer.log",
+    logDirectory:
+        "/opt/vrising-server/data/persistent",
 
     stateFile:
         path.resolve("state/state.json")

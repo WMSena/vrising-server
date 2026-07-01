@@ -1,39 +1,54 @@
-import TailRunner from "./runners/tail.runner.js";
-
 import config from "./config.js";
 
 import { loadState, saveState } from "./state.js";
+
+import { replayLog } from "./replay.js";
+
 import { parseLine } from "./parser.js";
+
+import TailRunner from "./runners/tail.runner.js";
+
+import { getLatestLog } from "./helpers/log.helper.js";
 
 export async function startMonitor() {
 
-    // Load existing state.json
+    console.log("[1/3] Loading state...");
+
     const state = await loadState();
 
-    const runner = new TailRunner(
-        config.logFile
+    console.log("[2/3] Replaying log...");
+
+    const logFile = await getLatestLog(
+        config.logDirectory
     );
 
-    runner.on("line", async (line) => {
+    await replayLog(
+        logFile,
+        state
+    );
+
+    await saveState(state);
+
+    console.log("[3/3] Following live log...");
+
+    const runner = new TailRunner(logFile);
+
+    let timer;
+
+    runner.on("line", (line) => {
 
         parseLine(line, state);
 
-        state.server.online = true;
-        state.server.lastUpdate = new Date().toISOString();
+        clearTimeout(timer);
 
-        await saveState(state);
+        timer = setTimeout(async () => {
 
-    });
+            state.server.lastUpdate =
+                new Date().toISOString();
 
-    runner.on("error", (error) => {
+            await saveState(state);
 
-        console.error(error);
-
-    });
-
-    runner.on("close", (code) => {
-
-        console.log(`TailRunner exited (${code})`);
+        }, 1000);
 
     });
 

@@ -43,7 +43,6 @@ export default class TailRunner extends EventEmitter {
                 this.buffer = lines.pop();
 
                 for (const line of lines) {
-
                     if (line.trim() !== "") {
 
                         this.emit("line", line);
